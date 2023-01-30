@@ -1,0 +1,173 @@
+<!Doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Single Digit Addition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+<style>
+* {
+	/*border: 1px solid black;*/
+}
+</style>
+</head>
+<body>
+
+<div style="max-width:800px; margin:auto;">
+	<div class="container border" style="margin:120px auto; display:none;" id="showScore">
+		<div class="text-center p-5">
+			<p>Score: <span class="points">0</span></p>
+			<button type="button" onclick="redo()" class="btn border"><i class="bi bi-arrow-clockwise"></i></button>
+		</div>
+	</div>
+	<div class="container" style="display:block;" id="main">
+		<div class=" text-center">
+			<button type="button" onclick="window.location.href='index.html'" class="btn border"><i class="bi bi-house-door-fill"></i></button>
+			<div class="text-right">
+				<i class="bi bi-heart-fill"></i>&nbsp;<i class="bi bi-heart-fill"></i>&nbsp;<i class="bi bi-heart-fill"></i>
+			</div>
+			<div class="text-left">
+				<p>Score: <span class="points">0</span></p>
+			</div>
+		</div>
+			<div class="progress border">
+				<div class="progress-bar bg-light" id="bar" style="width:100%;"></div>
+			</div>
+		<div class="container py-3 text-center" style="font-size:2em;"><p><span id="operand1"></span>+<span id="operand2"></span>=<span id="answer">?</span></p></div>
+		<div class="container text-center">
+			<button type="button" class="btn border my-1" style="width:80px; height:80px; font-size:1.5em;" onclick="numberKey('1')">1</button>
+			<button type="button" class="btn border my-1" style="width:80px; height:80px; font-size:1.5em;" onclick="numberKey('2')">2</button>
+			<button type="button" class="btn border my-1" style="width:80px; height:80px; font-size:1.5em;" onclick="numberKey('3')">3</button><br>
+			<button type="button" class="btn border my-1" style="width:80px; height:80px; font-size:1.5em;" onclick="numberKey('4')">4</button>
+			<button type="button" class="btn border my-1" style="width:80px; height:80px; font-size:1.5em;" onclick="numberKey('5')">5</button>
+			<button type="button" class="btn border my-1" style="width:80px; height:80px; font-size:1.5em;" onclick="numberKey('6')">6</button><br>
+			<button type="button" class="btn border my-1" style="width:80px; height:80px; font-size:1.5em;" onclick="numberKey('7')">7</button>
+			<button type="button" class="btn border my-1" style="width:80px; height:80px; font-size:1.5em;" onclick="numberKey('8')">8</button>
+			<button type="button" class="btn border my-1" style="width:80px; height:80px; font-size:1.5em;" onclick="numberKey('9')">9</button><br>
+			<button type="button" class="btn border my-1" style="width:122px; height:70px; font-size:1.5em;" onclick="numberKey('0')">0</button>
+			<button type="button" class="btn border my-1" style="width:122px; height:70px; font-size:1.5em;" onclick="backspaceKey()"><i class="bi bi-backspace-fill"></i></button>
+		</div>
+	</div>
+</div>
+
+<script>
+
+function compareAnswer() {
+	let num1 = document.getElementById("operand1");
+	let num2 = document.getElementById("operand2");
+	let answer = document.getElementById("answer");
+	num1 = Number(num1.innerHTML);
+	num2 = Number(num2.innerHTML);
+	let sum = num1 + num2;
+	answer = Number(answer.innerHTML);
+	if (answer == sum) {
+		return true;
+	}
+}
+
+function backspaceKey() {
+	let ans = document.getElementById("answer").innerHTML;
+	if (ans.length == 1) {
+		document.getElementById("answer").innerHTML = "?";
+	} else if (ans.length != "?") {
+		document.getElementById("answer").innerHTML = ans.substring(0,ans.length-1);
+	}
+}
+
+function restoreHealth() {
+	let life = document.getElementsByClassName("bi bi-heart");
+	let len = 0;
+	function addLife() {
+		life[len].className = "bi bi-heart-fill";
+	}
+	for (let x = 0; x < 3; x++) {
+		addLife();
+	}
+}
+
+function minusLife() {
+	let life = document.getElementsByClassName("bi bi-heart-fill");
+	let lifeLeft = 0;
+	if (life.length != 0) {
+		life[lifeLeft].className = "bi bi-heart";
+	}
+
+	if (life.length == 0) {
+		document.getElementById("main").style.display = "none";
+		document.getElementById("showScore").style.display = "block";
+	}
+}
+
+function plusPoints() {
+	let elem = document.getElementsByClassName("points");
+	let points = elem[0].innerHTML;
+	points = Number(points);
+	points++;
+	for (let x = 0; x < elem.length; x++) {
+		elem[x].innerHTML = points;
+	}
+}
+
+function setOperand() {
+	let num1 = document.getElementById("operand1");
+	let num2 = document.getElementById("operand2");
+	let max = 9;
+	let min = 1;
+	document.getElementById("operand1").innerHTML = Math.floor(Math.random() * (max - min)) + min;
+	document.getElementById("operand2").innerHTML = Math.floor(Math.random() * (max - min)) + min;
+	startTime();
+}
+
+function clearInput() {
+	document.getElementById("answer").innerHTML = "?";
+}
+
+let timer;
+function startTime() {
+	let width = 100;
+	timer = setInterval(frame, 10);
+	function frame() {
+		if (width <= 0) {
+			minusLife();
+			clearInterval(timer);
+		} else {
+			width = width - 0.1;
+			document.getElementById("bar").style.width = width + "%";
+		}
+	}
+}
+
+function stopTime() {
+	clearInterval(timer);
+}
+
+function numberKey(n) {
+	let ans = document.getElementById("answer").innerHTML;
+	if (ans == "?") {
+		document.getElementById("answer").innerHTML = n;
+	} else {
+		document.getElementById("answer").innerHTML += n;
+	}
+
+	if (compareAnswer() == true) {
+		plusPoints();
+		stopTime();
+		setOperand();
+		clearInput();
+	}
+}
+setOperand();
+
+function redo() {
+	document.getElementById("main").style.display = "block";
+	document.getElementById("showScore").style.display = "none";
+	setOperand();
+	restoreHealth();
+}
+</script>
+</body>
+</html>
